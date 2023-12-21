@@ -1,18 +1,23 @@
 const router = require("express").Router();
-const {
+ const {
   isAuthenticated,
   extractUserId,
-} = require("../middlewares/jwt.middleware");
+} = require("../middlewares/jwt.middleware"); 
 const {
   addPost,
-  getAllPostsWhishlist,
+  getLikedPosts,
   removeAPost,
+  updateFavorites
 } = require("../controllers/favoritesController");
-router.use(isAuthenticated);
-router.use(extractUserId);
+const {
+  updateUserData
+} = require("../controllers/userController");
+ router.use(isAuthenticated);
+router.use(extractUserId); 
 
-router.get("/wishlist", getAllPostsWhishlist);
-router.post('/', addPost)
+router.get("/:userId", getLikedPosts);
+router.post('/:userId', addPost)
+router.put('/:userId', updateFavorites);
 router.delete('/:postId', removeAPost)
 
 

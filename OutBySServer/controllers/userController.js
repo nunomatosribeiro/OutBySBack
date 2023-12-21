@@ -29,14 +29,15 @@ const getUserProfile = async (req, res) => {
 
 const updateUserData = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, { new: true })
+    const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true })
 
     if (updatedUser) {
       res.json(updatedUser)
       console.log(updatedUser)
     } else {
-      res.status(500).error('Failed to update user')
+      res.status(500).json({ error: 'Failed to update user' })
     }
+    
   } catch (error) {
     console.log(error)
     res.status(500).json(error)
@@ -55,6 +56,44 @@ const deleteUser = async (req, res) => {
     res.status(500).json(error)
   }
 }
+/** Set Admin **/
+const setAdminEmail = async (email) => {
+  try {
+    const adminUser = await User.findOneAndUpdate(
+      { email: email },
+      { isAdmin: true },
+      { new: true }
+    );
+
+    if (adminUser) {
+      console.log(`${email} has been set as an admin.`);
+    } else {
+      console.log(`User with email ${email} not found.`);
+    }
+  } catch (error) {
+    console.error('Error setting admin email:', error);
+  }
+};
+setAdminEmail('outbysporto@gmail.com');
+
+/** Check Admin Status**/
+const checkAdminStatus = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user && user.isAdmin) {
+      // User is an admin
+      req.isAdmin = true;
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 module.exports = {
   getUsers,

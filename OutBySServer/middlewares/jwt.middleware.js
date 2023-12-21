@@ -1,14 +1,5 @@
 const { expressjwt } = require('express-jwt');
 
-// Instantiate the JWT token validation middleware
-const isAuthenticated = expressjwt({
-  secret: process.env.TOKEN_SECRET,
-  algorithms: ['HS256'],
-  requestProperty: 'payload',
-  getToken: getTokenFromHeaders,
-   expiresIn: '1d',
-});
-
 // Function used to extracts the JWT token from the request's 'Authorization' Headers
 function getTokenFromHeaders(req) {
   // Check if the token is available on the request Headers
@@ -20,6 +11,15 @@ function getTokenFromHeaders(req) {
   return null;
 }
 
+// Instantiate the JWT token validation middleware
+const isAuthenticated = expressjwt({
+  secret: process.env.TOKEN_SECRET,
+  algorithms: ['HS256'],
+  requestProperty: 'payload',
+  getToken: getTokenFromHeaders,
+   expiresIn: '1d',
+});
+
 // Middleware to extract user ID from the payload and attach it to req.userId
 function extractUserId(req, res, next) {
   if (req.payload && req.payload._id) {
@@ -27,6 +27,7 @@ function extractUserId(req, res, next) {
   }
   next();
 }
+
 // Admin Middleware
 function isAdmin(req, res, next) {
   if (req.payload && req.payload.role === 'admin') {

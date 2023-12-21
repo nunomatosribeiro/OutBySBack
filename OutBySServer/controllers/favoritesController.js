@@ -5,37 +5,63 @@ const User = require("../models/User.model");
 const addPost = async (req, res) => {
   try {
     const { postId } = req.body;
+    const userId = req.payload._id;
     console.log(req.payload._id, postId, req.params);
-    const post = await Posts.findByIdAndUpdate(
-      req.params.postId,
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { $addToSet: { favorites: postId } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: "Post not found." });
+    }
+    res.json(user);
+  } catch (error) {
+    console.log("not possible to add to wishlist", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+/***** get all posts to wishlist *****/
+/** get liked Posts **/
+const getLikedPosts = async(req, res) => {
+  try{
+    const { userId } = req.params;
+console.log(userId, 'Ver aqui o user id para os posts liked')
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Fetch posts using user's favorites array
+    const postsLikedIds = user.favorites;
+    const postsLiked = await Post.find({ _id: { $in: user.favorites } });
+    res.json(postsLiked);
+  } catch (error){
+    res.status(500).json({error: 'An error occurred while fetching favorites'})
+  }
+}
+
+/**Update Favorites */
+const updateFavorites = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { postId  } = req.body;
+
+    // Update the user's favorites
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
       { $push: { favorites: postId } },
       { new: true }
     );
-    if (!post) {
-      return res.status(404).json({ error: "Post not found." });
-    }
-    res.json(post);
+
+    res.json(updatedUser);
   } catch (error) {
-    console.log("not possible to add to wishlist", error);
+    console.error('Error updating favorites:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-/***** get all posts to wishlist *****/
-const getAllPostsWhishlist = async (req, res) => {
-  try {
-    const currentUser = await User.findById(req.userId);
-
-    let wishlistPostIds = currentUser.favorites;
-
-    const posts = await Posts.find({ _id: { $in: user.favorites } });
-
-    res.json(posts);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching the posts." });
-  }
-};
 
 /****  Remove a Post from whishlist****/
 
@@ -62,6 +88,7 @@ const removeAPost = async (req, res) => {
 
 module.exports = {
   addPost,
-  getAllPostsWhishlist,
+  getLikedPosts,
   removeAPost,
+  updateFavorites
 };

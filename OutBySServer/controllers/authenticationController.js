@@ -12,7 +12,8 @@ const signUp = async (req, res) => {
 
   try {
     const newUser = await User.create({
-      username: payload.username,
+      name: payload.name,
+     /*  username: payload.username, */
       email: payload.email,
       password: passwordHash,
       

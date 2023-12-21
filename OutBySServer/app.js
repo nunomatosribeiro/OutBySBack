@@ -27,6 +27,12 @@ app.use("/users", userRoutes);
 const postRoutes = require("./routes/posts.routes");
 app.use("/posts", postRoutes);
 
+const formRoutes = require("./routes/form.routes");
+app.use("/forms", formRoutes);
+
+const favoritesRoutes = require("./routes/favorites.routes");
+app.use("/favorites", favoritesRoutes);
+
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 

@@ -32,7 +32,18 @@ const createPost = async (req, res) => {
     }
   };
   
+/** get Posts **/
+const getAllPosts = async (req, res) => {
+  try {
+    const posts = await Posts.find()
 
+    res.json(posts);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching the posts." });
+  }
+};
 /****Update a Post ****/
 
 const updatePost = async (req, res) => {
@@ -105,7 +116,7 @@ const LikePost = async (req, res) => {
 /** get liked Posts **/
 const getLikedPosts = async(req, res) => {
   try{
-    const userId = req.body._id;
+    const userId = req.body.userId ;
 
     // Check if user exists
     const user = await User.findById(userId);
@@ -188,5 +199,6 @@ getPostsByCategory,
 getPostDetails,
 LikePost,
 getLikedPosts,
-unlikePost
+unlikePost,
+getAllPosts
 };
