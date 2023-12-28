@@ -19,7 +19,7 @@ const {
 /* router.use(isAuthenticated);
 router.use(extractUserId); */
 router.get("/allposts", getAllPosts);
-router.post("/createpost", isAdmin, createPost);
+router.post("/createpost", createPost);
 router.get("/:category", getPostsByCategory);
 router.get("/details/:postId", getPostDetails);
 router.delete("/:postId", deletePost);

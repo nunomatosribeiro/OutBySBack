@@ -95,6 +95,7 @@ const checkAdminStatus = async (req, res, next) => {
   }
 };
 
+
 module.exports = {
   getUsers,
   getUserProfile,

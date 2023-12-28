@@ -1,3 +1,5 @@
+const User = require('../models/User.model')
+
 const { expressjwt } = require('express-jwt');
 
 // Function used to extracts the JWT token from the request's 'Authorization' Headers
@@ -28,15 +30,26 @@ function extractUserId(req, res, next) {
   next();
 }
 
-// Admin Middleware
-function isAdmin(req, res, next) {
-  if (req.payload && req.payload.role === 'admin') {
-    // User is an admin, proceed to the route
-    return next();
-  } else {
-    return res.status(403).json({ error: 'Permission denied.' });
+// middleware/isAdmin.js
+const isAdmin = async (req, res, next) => {
+  try {
+    const { email } = req.user; // Assuming you have user information in the request object
+
+    const user = await User.findOne({ email });
+
+    if (user && user.isAdmin) {
+      // User is an admin, proceed to the next middleware or route handler
+      next();
+    } else {
+      // User is not an admin, send an unauthorized response
+      res.status(403).json({ error: 'Access forbidden. Admins only.' });
+    }
+  } catch (error) {
+    // Handle errors
+    console.error('Error checking admin status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 // Export the middleware so that we can use it to create protected routes
 module.exports = {
   isAuthenticated,
