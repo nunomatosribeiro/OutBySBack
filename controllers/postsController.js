@@ -35,14 +35,20 @@ const createPost = async (req, res) => {
 /** get Posts **/
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Posts.find()
-
-    res.json(posts);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching the posts." });
-  }
+    
+      const category  = req.params.category;
+      const posts = await Posts.find({ category })
+    /*   .populate("category") */
+      if (posts.length === 0) {
+        return res.status(404).json({ error: 'No posts found for this category.' });
+      }
+      res.json(posts);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching the posts by category." });
+    }
+    
 };
 /****Update a Post ****/
 

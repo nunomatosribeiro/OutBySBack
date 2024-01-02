@@ -6,7 +6,7 @@ const addPost = async (req, res) => {
   try {
     const { postId } = req.body;
     const userId = req.payload._id;
-    console.log(req.payload._id, postId, req.params);
+    console.log(req.payload._id, postId, req.params, 'Favorites controller add post');
     const user = await User.findOneAndUpdate(
       { _id: userId },
       { $addToSet: { favorites: postId } },
@@ -35,7 +35,7 @@ console.log(userId, 'Ver aqui o user id para os posts liked')
 
     // Fetch posts using user's favorites array
     const postsLikedIds = user.favorites;
-    const postsLiked = await Post.find({ _id: { $in: user.favorites } });
+    const postsLiked = await Posts.find({ _id: { $in: postsLikedIds } });
     res.json(postsLiked);
   } catch (error){
     res.status(500).json({error: 'An error occurred while fetching favorites'})
@@ -67,10 +67,13 @@ const updateFavorites = async (req, res) => {
 
 const removeAPost = async (req, res) => {
   try {
-    const { postId } = req.body;
+    const { postId } = req.params; // Extract postId from URL parameters
     const userId = req.payload._id;
+
+    console.log(postId, 'CHECK POST ID DO REMOVEAPOST');
+
     const user = await User.findByIdAndUpdate(
-        userId,
+       userId ,
         { $pull: { favorites: postId } },
         { new: true }
       );
@@ -78,8 +81,10 @@ const removeAPost = async (req, res) => {
       return res.status(404).json({ error: "Post not found." });
     }
 
-    res.json(post);
+    res.json(user);
   } catch (error) {
+    
+    console.error("Error unliking post:", error);
     res
       .status(500)
       .json({ error: "An error occurred while removing the post." });
