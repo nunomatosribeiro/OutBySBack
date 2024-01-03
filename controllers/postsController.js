@@ -3,12 +3,13 @@ const User = require("../models/User.model");
 
 /****Create a Post ****/
 const createPost = async (req, res) => {
- /* try {
+  try {
+    console.log('User object:', req.payload)
      // Check if the user is an admin
-    if (req.user.role !== "admin") {
+    if (req.payload.isAdmin !== true) {
       return res.status(403).json({ error: "Permission denied." });
-    } */
-    try {
+    } 
+   
       const { title, description, category, allMedia,
          fullDescription, info, included } = req.body;
       

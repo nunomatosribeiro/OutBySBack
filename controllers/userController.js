@@ -76,24 +76,7 @@ const setAdminEmail = async (email) => {
 };
 setAdminEmail('outbysporto@gmail.com');
 
-/** Check Admin Status**/
-const checkAdminStatus = async (req, res, next) => {
-  const { email } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
-
-    if (user && user.isAdmin) {
-      // User is an admin
-      req.isAdmin = true;
-    }
-
-    next();
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
 
 
 module.exports = {
@@ -101,4 +84,5 @@ module.exports = {
   getUserProfile,
   updateUserData,
   deleteUser,
+  setAdminEmail
 }

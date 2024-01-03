@@ -2,7 +2,9 @@ const router = require("express").Router();
  const {
   isAuthenticated,
   extractUserId,
+    checkAdminStatus,
   isAdmin
+
 } = require("../middlewares/jwt.middleware"); 
 const {
   createPost,
@@ -16,10 +18,10 @@ const {
   getAllPosts
 
 } = require("../controllers/postsController");
-/* router.use(isAuthenticated);
-router.use(extractUserId); */
+
+
 router.get("/allposts", getAllPosts);
-router.post("/createpost", createPost);
+router.post("/createpost", isAuthenticated, isAdmin, createPost);
 router.get("/:category", getPostsByCategory);
 router.get("/details/:postId", getPostDetails);
 router.delete("/:postId", deletePost);

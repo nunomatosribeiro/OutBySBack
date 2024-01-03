@@ -1,17 +1,18 @@
-const User = require('../models/User.model')
-
+const User = require('../models/User.model');
 const { expressjwt } = require('express-jwt');
 
-// Function used to extracts the JWT token from the request's 'Authorization' Headers
-function getTokenFromHeaders(req) {
-  // Check if the token is available on the request Headers
+
+
+// Function used to extract the JWT token from the request's 'Authorization' Headers
+const getTokenFromHeaders = async (req) => {
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-    // Get the encoded token string and return it
     const token = req.headers.authorization.split(' ')[1];
+    console.log('Authorization header:', req.headers.authorization);
+    console.log('Token extracted from headers:', token);
     return token;
   }
   return null;
-}
+};
 
 // Instantiate the JWT token validation middleware
 const isAuthenticated = expressjwt({
@@ -19,7 +20,7 @@ const isAuthenticated = expressjwt({
   algorithms: ['HS256'],
   requestProperty: 'payload',
   getToken: getTokenFromHeaders,
-   expiresIn: '1d',
+  expiresIn: '1d',
 });
 
 // Middleware to extract user ID from the payload and attach it to req.userId
@@ -30,10 +31,30 @@ function extractUserId(req, res, next) {
   next();
 }
 
-// middleware/isAdmin.js
+/** Check Admin Status **/
+const checkAdminStatus = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await User.findOne({ userId });
+
+    if (user && user.isAdmin) {
+      // User is an admin
+      req.user.isAdmin = true;
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Middleware to check if the user is an admin
 const isAdmin = async (req, res, next) => {
   try {
-    const { email } = req.user; // Assuming you have user information in the request object
+    console.log('user object admin:', req.payload); // Log the entire req.user object
+    const { email } = req.payload; // Assuming you have user information in the request object
 
     const user = await User.findOne({ email });
 
@@ -50,9 +71,10 @@ const isAdmin = async (req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-// Export the middleware so that we can use it to create protected routes
+
 module.exports = {
   isAuthenticated,
   extractUserId,
+  checkAdminStatus,
   isAdmin,
 };
