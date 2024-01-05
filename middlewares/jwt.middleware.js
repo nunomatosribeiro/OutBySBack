@@ -53,8 +53,8 @@ const checkAdminStatus = async (req, res, next) => {
 // Middleware to check if the user is an admin
 const isAdmin = async (req, res, next) => {
   try {
-    console.log('user object admin:', req.payload); // Log the entire req.user object
-    const { email } = req.payload; // Assuming you have user information in the request object
+    console.log('user object admin:', req.body); // Log the entire req.user object
+    const { email } = req.body; // Assuming you have user information in the request object
 
     const user = await User.findOne({ email });
 
