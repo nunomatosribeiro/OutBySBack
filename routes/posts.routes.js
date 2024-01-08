@@ -2,8 +2,8 @@ const router = require("express").Router();
  const {
   isAuthenticated,
   extractUserId,
-    checkAdminStatus,
-  isAdmin
+    /* checkAdminStatus,
+  isAdmin */
 
 } = require("../middlewares/jwt.middleware"); 
 const {
