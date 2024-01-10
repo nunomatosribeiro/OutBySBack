@@ -6,7 +6,7 @@ const createPost = async (req, res) => {
   try {
     console.log('User object:', req.payload)
      // Check if the user is an admin
-    if (req.payload.isAdmin !== true) {
+    if (!req.payload.isAdmin ) {
       return res.status(403).json({ error: "Permission denied." });
     } 
    

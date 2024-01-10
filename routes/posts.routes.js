@@ -21,7 +21,7 @@ const {
 
 
 router.get("/allposts", getAllPosts);
-router.post("/createpost",  /*isAuthenticated, isAdmin, */ createPost);
+router.post("/createpost",  isAuthenticated, createPost);
 router.get("/:category", getPostsByCategory);
 router.get("/details/:postId", getPostDetails);
 router.delete("/:postId", deletePost);
