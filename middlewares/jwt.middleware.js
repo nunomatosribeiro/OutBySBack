@@ -32,7 +32,7 @@ function extractUserId(req, res, next) {
 }
 
 /** Check Admin Status **/
-/* const checkAdminStatus = async (req, res, next) => {
+const checkAdminStatus = async (req, res, next) => {
   const { userId } = req.body;
 
   try {
@@ -48,10 +48,10 @@ function extractUserId(req, res, next) {
     console.error('Error checking admin status:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}; */
+}; 
 
 // Middleware to check if the user is an admin
-/* const isAdmin = async (req, res, next) => {
+ const isAdmin = async (req, res, next) => {
   try {
     console.log('user object admin:', req.body); // Log the entire req.user object
     const { email } = req.body; // Assuming you have user information in the request object
@@ -70,11 +70,11 @@ function extractUserId(req, res, next) {
     console.error('Error checking admin status:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}; */
+}; 
 
 module.exports = {
   isAuthenticated,
   extractUserId,
-  /* checkAdminStatus,
-  isAdmin, */
+   checkAdminStatus,
+  isAdmin, 
 };

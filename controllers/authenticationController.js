@@ -6,7 +6,10 @@ const User = require('../models/User.model')
 
 const signUp = async (req, res) => {
   const payload = req.body // { email: 'someEmail', password '1234'}
-
+  console.log('Payload:', payload);
+  if (!payload || !payload.password) {
+    return res.status(400).json({ message: 'Password is missing in the payload' });
+  }
   const salt = bcrypt.genSaltSync(13)
   const passwordHash = bcrypt.hashSync(payload.password, salt)
 
